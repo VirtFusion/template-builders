@@ -1,19 +1,19 @@
 {
   "variables": {
-    "iso_urls": "http://uk.mirrors.clouvider.net/almalinux/8.5/isos/x86_64/AlmaLinux-8.5-x86_64-minimal.iso",
-    "iso_checksum": "fddb5646627aecc572127ecf0b5a3b2b6dd4435f1a1b5ad42013c7fa1bff8ca8",
+    "iso_urls": "https://uk.mirrors.clouvider.net/rocky/8/isos/x86_64/Rocky-8.5-x86_64-minimal.iso",
+    "iso_checksum": "4eb2ae6b06876205f2209e4504110fe4115b37540c21ecfbbc0ebc11084cb779",
     "iso_checksum_type": "sha256",
     "cpu": "4",
     "ram": "1024",
     "disk_size": "3700",
-    "name": "alma-linux",
+    "name": "rocky-linux",
     "version": "8",
     "type": "minimal",
     "arch": "x86_64",
     "img_type": "qcow2",
     "headless": "true",
     "config_file": "ks.cfg",
-    "config_folder": "config/almalinux-8-minimal",
+    "config_folder": "config/rocky-linux-8-minimal",
     "ssh_username": "root",
     "ssh_password": "S33!]HsHym/cK.n*<#,)#Nx2_h5Y>MN74xT,j4}Ak9Ny[3,yB",
     "output_dir": "../output/"

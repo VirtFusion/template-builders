@@ -1,33 +1,32 @@
 {
   "variables": {
-    "iso_urls": "http://uk.mirrors.clouvider.net/almalinux/8.5/isos/x86_64/AlmaLinux-8.5-x86_64-minimal.iso",
-    "iso_checksum": "fddb5646627aecc572127ecf0b5a3b2b6dd4435f1a1b5ad42013c7fa1bff8ca8",
+    "iso_urls": "http://mirror.cwcs.co.uk/centos/7.9.2009/isos/x86_64/CentOS-7-x86_64-Minimal-2009.iso",
+    "iso_checksum": "07b94e6b1a0b0260b94c83d6bb76b26bf7a310dc78d7a9c7432809fb9bc6194a",
     "iso_checksum_type": "sha256",
     "cpu": "4",
     "ram": "1024",
-    "disk_size": "3700",
-    "name": "alma-linux",
-    "version": "8",
-    "type": "minimal",
     "arch": "x86_64",
     "img_type": "qcow2",
+    "disk_size": "2000",
+    "name": "centos",
+    "version": "7",
+    "type": "minimal",
+    "config_folder": "config/centos-7-minimal",
     "headless": "true",
-    "config_file": "ks.cfg",
-    "config_folder": "config/almalinux-8-minimal",
+    "config_file": "ks-1.cfg",
     "ssh_username": "root",
-    "ssh_password": "S33!]HsHym/cK.n*<#,)#Nx2_h5Y>MN74xT,j4}Ak9Ny[3,yB",
+    "ssh_password": "L=hD6!rf<4x{[$^@rDt9wTbp8?28)}",
     "output_dir": "../output/"
   },
   "builders": [
     {
-      "vnc_bind_address": "0.0.0.0",
+      "name": "{{user `name`}}-{{user `version`}}-{{user `type`}}-{{user `arch`}}.{{user `img_type`}}",
       "vnc_port_max": 5901,
       "vnc_port_min": 5901,
-      "name": "{{user `name`}}-{{user `version`}}-{{user `arch`}}.{{user `img_type`}}",
+      "vnc_bind_address": "0.0.0.0",
       "type": "qemu",
       "format": "{{user `img_type`}}",
       "accelerator": "kvm",
-      "qemu_binary": "/usr/bin/qemu-system-x86_64",
       "net_device": "virtio-net",
       "disk_interface": "virtio",
       "disk_cache": "none",
@@ -49,15 +48,15 @@
       "iso_checksum": "{{user `iso_checksum`}}",
       "boot_wait": "5s",
       "boot_command": [
-        "<up><wait><tab><wait> net.ifnames=0 biosdevname=0 text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `config_folder`}}/http/{{user `config_file`}}<enter><wait>"
+        "<up><wait><tab><wait> net.ifnames=0 biosdevname=0 text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `config_folder`}}/http/{{user `config_file`}}<enter><wait>"
       ],
       "disk_size": "{{user `disk_size`}}",
       "disk_discard": "unmap",
       "disk_compression": true,
       "headless": "{{user `headless`}}",
-      "shutdown_command": "shutdown -h now",
-      "vm_name": "{{user `name`}}-{{user `version`}}-{{user `type`}}-{{user `arch`}}.{{user `img_type`}}",
-      "output_directory": "{{user `output_dir`}}{{user `name`}}-{{user `version`}}-{{user `type`}}-{{user `arch`}}"
+      "shutdown_command": "echo '{{user `ssh_password`}}' | shutdown -P now",
+      "output_directory": "{{user `output_dir`}}{{user `name`}}-{{user `version`}}-{{user `type`}}-{{user `arch`}}",
+      "vm_name": "{{user `name`}}-{{user `version`}}-{{user `type`}}-{{user `arch`}}.{{user `img_type`}}"
     }
   ],
   "provisioners": [

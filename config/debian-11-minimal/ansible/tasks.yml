@@ -1,0 +1,85 @@
+---
+- name: Debian 11
+  hosts: default
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+    - name: Find temporary files
+      find:
+        file_type: any
+        paths:
+          - /tmp
+          - /var/tmp
+        patterns: '*'
+      register: tmp_files
+
+    - name: Remove temporary files
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ tmp_files.files }}"
+
+    - name: Remove SSH host keys
+      block:
+        - name: Find SSH host keys
+          find:
+            paths: /etc/ssh
+            patterns: '*host*key*'
+          register: host_keys
+
+        - name: Remove SSH host keys
+          file:
+            path: "{{ item.path }}"
+            state: absent
+          loop: "{{ host_keys.files }}"
+
+    - name: Truncate files
+      command: "truncate -s 0 {{ item }}"
+      loop:
+        - /etc/machine-id
+        - /var/log/auth.log
+        - /var/log/wtmp
+        - /var/log/lastlog
+        - /var/log/dpkg.log
+
+    - name: Purge APT cache
+      shell: apt-get -y autoremove --purge
+
+    - name: Clean APT
+      shell: apt-get clean
+
+    - name: Clean man 1
+      shell: rm -rf /usr/share/man/??
+
+    - name: Clean man 2
+      shell: rm -rf /usr/share/man/??_*
+
+    - name: Clean /etc/network/interfaces
+      shell: echo "source /etc/network/interfaces.d/*" > /etc/network/interfaces
+
+    - name: Modify /etc/ssh/sshd_config
+      shell: sed -i -e "s/^#\\?PasswordAuthentication.*/PasswordAuthentication no/g" /etc/ssh/sshd_config
+
+    - name: Fill free space with zeroes
+      shell: dd if=/dev/zero of=/zeroed_file bs=1M oflag=direct || /bin/true
+
+    - name: Remove zeroed file
+      file:
+        path: /zeroed_file
+        state: absent
+
+    - name: Sync disc
+      command: sync
+
+    - name: Delete root password
+      shell: passwd -d root
+
+    - name: Lock root password
+      shell: passwd -l root
+
+    - name: Clear shell history
+      shell: history -c
+      ignore_errors: yes
+

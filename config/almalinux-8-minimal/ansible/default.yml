@@ -164,7 +164,6 @@
         path: "{{ item.path }}"
         state: absent
       loop: "{{ host_keys.files }}"
-  when: cleanup_ssh_host_keys | bool
 
 - name: Remove kickstart files
   file:
@@ -196,4 +195,9 @@
 - name: Clear shell history
   shell: history -c
 
-cleanup_ssh_host_keys: true
+- name: Delete root password
+  shell: passwd -d root
+
+- name: Lock root password
+  shell: passwd -l root
+

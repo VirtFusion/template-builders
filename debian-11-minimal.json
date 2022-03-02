@@ -5,6 +5,8 @@
     "iso_checksum_type": "sha512",
     "cpu": "4",
     "ram": "1024",
+    "arch": "x86_64",
+    "img_type": "qcow2",
     "disk_size": "2000",
     "name": "debian",
     "version": "11",
@@ -18,12 +20,12 @@
   },
   "builders": [
     {
-      "name": "{{user `name`}}-{{user `version`}}-{{user `type`}}-x86_64.qcow2",
+      "name": "{{user `name`}}-{{user `version`}}-{{user `type`}}-{{user `arch`}}.{{user `img_type`}}",
       "vnc_port_max": 5901,
       "vnc_port_min": 5901,
       "vnc_bind_address": "0.0.0.0",
       "type": "qemu",
-      "format": "qcow2",
+      "format": "{{user `img_type`}}",
       "accelerator": "kvm",
       "net_device": "virtio-net",
       "disk_interface": "virtio",
@@ -71,8 +73,8 @@
       "disk_compression": true,
       "headless": "{{user `headless`}}",
       "shutdown_command": "echo '{{user `ssh_password`}}' | shutdown -P now",
-      "output_directory": "{{user `output_dir`}}{{user `name`}}-{{user `version`}}-{{user `type`}}-x86_64",
-      "vm_name": "{{user `name`}}-{{user `version`}}-{{user `type`}}-x86_64.qcow2"
+      "output_directory": "{{user `output_dir`}}{{user `name`}}-{{user `version`}}-{{user `type`}}-{{user `arch`}}",
+      "vm_name": "{{user `name`}}-{{user `version`}}-{{user `type`}}-{{user `arch`}}.{{user `img_type`}}"
     }
   ],
   "provisioners": [

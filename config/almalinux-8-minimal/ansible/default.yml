@@ -1,0 +1,8 @@
+---
+- name: AlmaLinux
+  hosts: default
+  become: true
+
+  roles:
+    - guest
+    - cleanup_vm

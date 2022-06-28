@@ -1,0 +1,114 @@
+{
+  "variables": {
+    "name": "windows-server-2019-datacenter",
+    "name_version": "-ci-1",
+    "iso_url": "./source/windows-server-2019.iso",
+    "virtio_win_iso": "./source/virtio-win.iso",
+    "iso_checksum": "549bca46c055157291be6c22a3aaaed8330e78ef4382c99ee82c896426a1cee1",
+    "iso_checksum_type": "sha256",
+    "output_dir": "../output",
+    "cpus": "8",
+    "ram": "8192",
+    "user": "Administrator",
+    "password": "Administrator",
+    "disk_size": "12000",
+    "disk_cache": "writeback",
+    "ssh_winrm_host_port": "2299",
+    "winrm_username": "Administrator",
+    "winrm_password": "Administrator",
+    "restart_timeout": "5m"
+  },
+  "builders": [
+    {
+      "communicator": "winrm",
+      "winrm_username": "{{ user `winrm_username` }}",
+      "winrm_password": "{{ user `winrm_password` }}",
+      "winrm_timeout": "12h",
+      "vnc_bind_address": "0.0.0.0",
+      "vnc_port_min": 5920,
+      "vnc_port_max": 5920,
+      "winrm_use_ssl": "true",
+      "winrm_insecure": "true",
+      "accelerator": "kvm",
+      "headless": "true",
+      "output_directory": "{{ user `output_dir`}}/{{ user `name`}}{{ user `name_version`}}",
+      "shutdown_command": "a:/sysprep.bat",
+      "shutdown_timeout": "15m",
+      "disk_size": "{{ user `disk_size` }}",
+      "floppy_files": [
+        "./config/{{ user `name` }}/files/*",
+        "./config/{{ user `name` }}/scripts/*",
+        "./patches/windows/cloudinit/windows.py"
+      ],
+      "vm_name": "{{ user `name`}}{{ user `name_version`}}.qcow2",
+      "type": "qemu",
+      "qemuargs": [
+        [
+          "-m",
+          "{{ user `ram` }}M"
+        ],
+        [
+          "-smp",
+          "{{ user `cpus` }}"
+        ],
+        [
+          "-drive",
+          "file={{ user `iso_url` }},media=cdrom,index=2"
+        ],
+        [
+          "-drive",
+          "file={{ user `virtio_win_iso` }},media=cdrom,index=3"
+        ],
+        [
+          "-drive",
+          "file={{ user `output_dir`}}/{{ user `name`}}{{ user `name_version`}}/{{ user `name`}}{{ user `name_version`}}.qcow2,if=virtio,cache=writeback,discard=ignore,format=qcow2,index=1"
+        ]
+      ],
+      "iso_checksum": "{{ user `iso_checksum` }}",
+      "iso_urls": [
+        "{{ user `iso_url` }}"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "scripts": [
+        "./config/{{ user `name` }}/scripts/debloat-windows.ps1"
+      ],
+      "type": "powershell"
+    },
+    {
+      "restart_timeout": "{{user `restart_timeout`}}",
+      "type": "windows-restart"
+    },
+    {
+      "type": "file",
+      "source": "./config/{{ user `name` }}/scripts/InstallUpdates.ps1",
+      "destination": "C:\\Windows\\Temp\\InstallUpdates.ps1"
+    },
+    {
+      "type": "powershell",
+      "script": "./config/{{ user `name` }}/scripts/install_win_updates.ps1"
+    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "60m"
+    },
+    {
+      "execute_command": "{{ .Vars }} cmd /c \"{{ .Path }}\"",
+      "scripts": [
+        "./config/{{ user `name` }}/scripts/set-winrm-automatic.bat",
+        "./config/{{ user `name` }}/scripts/uac-enable.bat",
+        "./config/{{ user `name` }}/scripts/dis-updates.bat",
+        "./config/{{ user `name` }}/scripts/compact.bat"
+      ],
+      "type": "windows-shell"
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./config/{{ user `name` }}/scripts/cleanup.ps1"
+      ]
+    }
+  ]
+}

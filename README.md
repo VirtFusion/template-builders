@@ -37,3 +37,17 @@ packer build debian-11-minimal.json
 ```shell
 packer build centos-7-minimal.json
 ```
+
+### Windows 2019
+```shell
+sh windows-sources.sh
+packer build windows-server-2019-standard.json
+packer build windows-server-2019-datacenter.json
+```
+
+### Windows 2022
+```shell
+sh windows-sources.sh
+packer build windows-server-2022-standard.json
+packer build windows-server-2022-datacenter.json
+```

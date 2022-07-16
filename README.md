@@ -26,6 +26,7 @@ packer build almalinux-8-minimal.json
 ### Rocky Linux
 ```shell
 packer build rocky-linux-8-minimal.json
+packer build rocky-linux-9-minimal.json
 ```
 
 ### Debian 11

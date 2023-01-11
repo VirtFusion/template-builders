@@ -1,17 +1,17 @@
 {
   "variables": {
-    "name": "windows-server-2022-standard",
-    "name_version": "-ci-1",
+    "name": "windows-server-2022-datacenter",
+    "name_version": "-ci-optimized",
     "iso_url": "./source/windows-server-2022.iso",
     "virtio_win_iso": "./source/virtio-win.iso",
     "iso_checksum": "4f1457c4fe14ce48c9b2324924f33ca4f0470475e6da851b39ccbf98f44e7852",
     "iso_checksum_type": "sha256",
     "output_dir": "../output",
     "cpus": "8",
-    "ram": "8192",
+    "ram": "16384",
     "user": "Administrator",
     "password": "Administrator",
-    "disk_size": "12000",
+    "disk_size": "30000",
     "disk_cache": "writeback",
     "ssh_winrm_host_port": "2299",
     "winrm_username": "Administrator",
@@ -72,16 +72,6 @@
   ],
   "provisioners": [
     {
-      "scripts": [
-        "./config/{{ user `name` }}/scripts/debloat-windows.ps1"
-      ],
-      "type": "powershell"
-    },
-    {
-      "restart_timeout": "{{user `restart_timeout`}}",
-      "type": "windows-restart"
-    },
-    {
       "type": "file",
       "source": "./config/{{ user `name` }}/scripts/InstallUpdates.ps1",
       "destination": "C:\\Windows\\Temp\\InstallUpdates.ps1"
@@ -95,6 +85,17 @@
       "restart_timeout": "60m"
     },
     {
+      "pause_before": "200s",
+      "scripts": [
+        "./config/{{ user `name` }}/scripts/debloat-windows.ps1"
+      ],
+      "type": "powershell"
+    },
+    {
+      "restart_timeout": "{{user `restart_timeout`}}",
+      "type": "windows-restart"
+    },
+    {
       "execute_command": "{{ .Vars }} cmd /c \"{{ .Path }}\"",
       "scripts": [
         "./config/{{ user `name` }}/scripts/set-winrm-automatic.bat",
@@ -105,9 +106,16 @@
       "type": "windows-shell"
     },
     {
+      "pause_before": "300s",
       "type": "powershell",
       "scripts": [
         "./config/{{ user `name` }}/scripts/cleanup.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./config/{{ user `name` }}/scripts/resize-disk.ps1"
       ]
     }
   ]

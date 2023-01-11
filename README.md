@@ -14,6 +14,7 @@ apt-get install packer -y
 
 git clone https://bitbucket.org/virtfusion-public/packer.git
 cd packer
+mkdir source
 ```
 
 Once all the requirements are installed you may build a template.
@@ -39,16 +40,24 @@ packer build debian-11-minimal.json
 packer build centos-7-minimal.json
 ```
 
-### Windows 2019
+### Windows Server 2019
 ```shell
 sh windows-sources.sh
-packer build windows-server-2019-standard.json
-packer build windows-server-2019-datacenter.json
+packer build -only=qemu.server-2019-standard .
+packer build -only=qemu.server-2019-datacenter .
 ```
 
-### Windows 2022
+### Windows Server 2022
 ```shell
 sh windows-sources.sh
-packer build windows-server-2022-standard.json
-packer build windows-server-2022-datacenter.json
+packer build -only=qemu.server-2022-standard .
+packer build -only=qemu.server-2022-datacenter .
+```
+
+# Useful Windows Commands
+
+## Remove Windows updates polices
+
+```shell
+reg delete HKEY_LOCAL_MACHINE\\Software\\Policies\\Microsoft\\Windows\\WindowsUpdate /f
 ```

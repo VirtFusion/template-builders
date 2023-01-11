@@ -1,21 +1,21 @@
 {
   "variables": {
     "name": "windows-server-2019-datacenter",
-    "name_version": "-ci-1",
+    "name_version": "-ci",
     "iso_url": "./source/windows-server-2019.iso",
     "virtio_win_iso": "./source/virtio-win.iso",
     "iso_checksum": "549bca46c055157291be6c22a3aaaed8330e78ef4382c99ee82c896426a1cee1",
     "iso_checksum_type": "sha256",
     "output_dir": "../output",
-    "cpus": "8",
-    "ram": "8192",
+    "cpus": "4",
+    "ram": "3072",
     "user": "Administrator",
-    "password": "Administrator",
-    "disk_size": "12000",
+    "password": "SVDMV#tcV2MWrr#WUZMv",
+    "disk_size": "14000",
     "disk_cache": "writeback",
     "ssh_winrm_host_port": "2299",
     "winrm_username": "Administrator",
-    "winrm_password": "Administrator",
+    "winrm_password": "SVDMV#tcV2MWrr#WUZMv",
     "restart_timeout": "5m"
   },
   "builders": [
@@ -37,8 +37,8 @@
       "disk_size": "{{ user `disk_size` }}",
       "floppy_files": [
         "./config/{{ user `name` }}/files/*",
-        "./config/{{ user `name` }}/scripts/*",
-        "./patches/windows/cloudinit/windows.py"
+        "./config/windows-shared/scripts/*",
+        "./config/windows-shared/patches/cloudinit/windows.py"
       ],
       "vm_name": "{{ user `name`}}{{ user `name_version`}}.qcow2",
       "type": "qemu",
@@ -72,8 +72,24 @@
   ],
   "provisioners": [
     {
+      "type": "windows-shell",
+      "inline": [
+        "dism /online /Remove-Capability /CapabilityName:Browser.InternetExplorer~~~~0.0.11.0 /NoRestart"
+      ],
+      "valid_exit_codes": [
+        0,
+        3010
+      ]
+    },
+    {
+      "type": "windows-shell",
+      "inline": [
+        "powershell.exe a:\\edge.ps1"
+      ]
+    },
+    {
       "scripts": [
-        "./config/{{ user `name` }}/scripts/debloat-windows.ps1"
+        "./config/windows-shared/scripts/debloat-windows.ps1"
       ],
       "type": "powershell"
     },
@@ -82,33 +98,24 @@
       "type": "windows-restart"
     },
     {
-      "type": "file",
-      "source": "./config/{{ user `name` }}/scripts/InstallUpdates.ps1",
-      "destination": "C:\\Windows\\Temp\\InstallUpdates.ps1"
-    },
-    {
-      "type": "powershell",
-      "script": "./config/{{ user `name` }}/scripts/install_win_updates.ps1"
-    },
-    {
-      "type": "windows-restart",
-      "restart_timeout": "60m"
-    },
-    {
       "execute_command": "{{ .Vars }} cmd /c \"{{ .Path }}\"",
       "scripts": [
-        "./config/{{ user `name` }}/scripts/set-winrm-automatic.bat",
-        "./config/{{ user `name` }}/scripts/uac-enable.bat",
-        "./config/{{ user `name` }}/scripts/dis-updates.bat",
-        "./config/{{ user `name` }}/scripts/compact.bat"
+        "./config/windows-shared/scripts/set-winrm-automatic.bat",
+        "./config/windows-shared/scripts/compact.bat"
       ],
       "type": "windows-shell"
     },
     {
       "type": "powershell",
       "scripts": [
-        "./config/{{ user `name` }}/scripts/cleanup.ps1"
+        "./config/windows-shared/scripts/cleanup.ps1"
+      ]
+    },
+    {
+      "type": "windows-shell",
+      "inline": [
+        "reg add \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU\" /v AUOptions /t REG_DWORD /d 7 /f"
       ]
     }
-  ]
+   ]
 }

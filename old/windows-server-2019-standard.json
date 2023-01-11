@@ -1,17 +1,17 @@
 {
   "variables": {
     "name": "windows-server-2019-standard",
-    "name_version": "-ci-1",
+    "name_version": "-ci-optimized",
     "iso_url": "./source/windows-server-2019.iso",
     "virtio_win_iso": "./source/virtio-win.iso",
     "iso_checksum": "549bca46c055157291be6c22a3aaaed8330e78ef4382c99ee82c896426a1cee1",
     "iso_checksum_type": "sha256",
     "output_dir": "../output",
     "cpus": "8",
-    "ram": "8192",
+    "ram": "16384",
     "user": "Administrator",
     "password": "Administrator",
-    "disk_size": "12000",
+    "disk_size": "30000",
     "disk_cache": "writeback",
     "ssh_winrm_host_port": "2299",
     "winrm_username": "Administrator",
@@ -72,16 +72,6 @@
   ],
   "provisioners": [
     {
-      "scripts": [
-        "./config/{{ user `name` }}/scripts/debloat-windows.ps1"
-      ],
-      "type": "powershell"
-    },
-    {
-      "restart_timeout": "{{user `restart_timeout`}}",
-      "type": "windows-restart"
-    },
-    {
       "type": "file",
       "source": "./config/{{ user `name` }}/scripts/InstallUpdates.ps1",
       "destination": "C:\\Windows\\Temp\\InstallUpdates.ps1"
@@ -93,6 +83,17 @@
     {
       "type": "windows-restart",
       "restart_timeout": "60m"
+    },
+    {
+      "pause_before": "200s",
+      "scripts": [
+        "./config/{{ user `name` }}/scripts/debloat-windows.ps1"
+      ],
+      "type": "powershell"
+    },
+    {
+      "restart_timeout": "{{user `restart_timeout`}}",
+      "type": "windows-restart"
     },
     {
       "execute_command": "{{ .Vars }} cmd /c \"{{ .Path }}\"",
@@ -107,8 +108,26 @@
     {
       "type": "powershell",
       "scripts": [
+        "./config/{{ user `name` }}/scripts/edge.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "pause_before": "300s",
+      "scripts": [
         "./config/{{ user `name` }}/scripts/cleanup.ps1"
       ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./config/{{ user `name` }}/scripts/resize-disk.ps1"
+      ]
+    },
+    {
+      "pause_before": "120s",
+      "type": "windows-shell",
+      "inline": ["dir c:\\"]
     }
   ]
 }

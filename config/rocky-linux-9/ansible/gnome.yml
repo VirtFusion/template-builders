@@ -1,0 +1,22 @@
+---
+- name: Gnome
+  hosts: default
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+    - name: Epel
+      shell: dnf install epel-release -y
+    - name: Install Desktop
+      shell: dnf groupinstall "gnome" "firefox" -y
+    - name: Enable Desktop
+      shell: systemctl set-default graphical
+    - name: Install XRDP
+      shell: dnf install xrdp -y
+    - name: Enable XRDP
+      shell: systemctl enable xrdp --now
+    - name: Remove unwanted apps
+      shell: dnf remove -y cheese
+
+

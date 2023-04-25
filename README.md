@@ -21,18 +21,36 @@ Once all the requirements are installed you may build a template.
 
 ### AlmaLinux
 ```shell
-packer build almalinux-8-minimal.json
+packer build -only=qemu.base-9-x86_64 alma.pkr.hcl
+packer build -only=qemu.gnome-9-x86_64 alma.pkr.hcl
 ```
 
 ### Rocky Linux
 ```shell
-packer build rocky-linux-8-minimal.json
-packer build rocky-linux-9-minimal.json
+packer build -only=qemu.base-9-x86_64 rocky.pkr.hcl
+packer build -only=qemu.gnome-9-x86_64 rocky.pkr.hcl
+```
+
+### Debian 10
+```shell
+packer build -only=qemu.base-10-x86_64 debian.pkr.hcl
 ```
 
 ### Debian 11
 ```shell
-packer build debian-11-minimal.json
+packer build -only=qemu.base-11-x86_64 debian.pkr.hcl
+packer build -only=qemu.xfce-11-x86_64 debian.pkr.hcl
+```
+
+### Debian 12
+```shell
+packer build -only=qemu.base-12-x86_64 debian.pkr.hcl
+```
+
+### Oracle Linux
+```shell
+packer build -only=qemu.base-9-x86_64 oracle.pkr.hcl
+packer build -only=qemu.base-uek-9-x86_64 oracle.pkr.hcl
 ```
 
 ### CentOS 7 

@@ -1,5 +1,5 @@
 ---
-- name: Debian 11
+- name: Debian 10
   hosts: default
   become: true
   vars:

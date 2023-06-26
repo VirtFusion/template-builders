@@ -61,6 +61,9 @@
     - name: Purge APT cache
       shell: apt-get -y autoremove --purge
 
+    - name: Enable guest agent
+      shell: /usr/bin/systemctl enable qemu-guest-agent
+
     - name: Clean APT
       shell: apt-get clean
 

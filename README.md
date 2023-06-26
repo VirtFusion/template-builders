@@ -53,9 +53,9 @@ packer build -only=qemu.base-9-x86_64 oracle.pkr.hcl
 packer build -only=qemu.base-uek-9-x86_64 oracle.pkr.hcl
 ```
 
-### CentOS 7 
+### CentOS (Stream)
 ```shell
-packer build centos-7-minimal.json
+packer build -only=qemu.base-9-x86_64 centos.pkr.hcl
 ```
 
 ### Windows Server 2019

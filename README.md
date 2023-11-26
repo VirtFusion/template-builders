@@ -61,15 +61,15 @@ packer build -only=qemu.base-9-x86_64 centos.pkr.hcl
 ### Windows Server 2019
 ```shell
 sh windows-sources.sh
-packer build -only=qemu.server-2019-standard .
-packer build -only=qemu.server-2019-datacenter .
+packer build -only=qemu.server-2019-standard windows-server.pkr.hcl
+packer build -only=qemu.server-2019-datacenter windows-server.pkr.hcl
 ```
 
 ### Windows Server 2022
 ```shell
 sh windows-sources.sh
-packer build -only=qemu.server-2022-standard .
-packer build -only=qemu.server-2022-datacenter .
+packer build -only=qemu.server-2022-standard windows-server.pkr.hcl
+packer build -only=qemu.server-2022-datacenter windows-server.pkr.hcl
 ```
 
 # Useful Windows Commands

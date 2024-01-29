@@ -21,9 +21,9 @@ variables {
   cpu               = "4"
   ram               = "2048"
   cpu_model         = "host"
-  iso_checksum_type = "sha245"
-  iso_9             = "http://mirrors.coreix.net/almalinux/9.1/isos/x86_64/AlmaLinux-9.1-x86_64-boot.iso"
-  iso_9_checksum    = "9f22bd98c8930b1d0b2198ddd273c6647c09298e10a0167197a3f8c293d03090"
+  iso_checksum_type = "sha256"
+  iso_9             = "https://uk.mirrors.clouvider.net/almalinux/9.3/isos/x86_64/AlmaLinux-9.3-x86_64-boot.iso"
+  iso_9_checksum    = "af5377a1d16bbe599ea91a8761ad645f2f54687075802bdc0c0703ee610182e9"
   config_file_base  = "ks-base.cfg"
 }
 
@@ -31,13 +31,16 @@ variables {
 source "qemu" "base-9-x86_64" {
   vm_name          = "almalinux-9-x86_64.qcow2"
   output_directory = "${var.output_dir}almalinux-9-x86_64"
-  disk_size        = "2000"
+  disk_size        = "3000"
   boot_command     = [
-    "c<wait>",
-    "linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=AlmaLinux-9-1-x86_64-dvd ro ",
-    "inst.text biosdevname=0 net.ifnames=0 ",
-    "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.config_folder}alma-linux-9/http/${var.config_file_base}<enter>",
-    "initrdefi /images/pxeboot/initrd.img<enter>",
+    "c<tab><wait>",
+    " linuxefi /images/pxeboot/vmlinuz",
+    " inst.stage2=hd:LABEL=AlmaLinux-9-3-x86_64-dvd ro",
+    " inst.text biosdevname=0 net.ifnames=0",
+    " inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.config_folder}alma-linux-9/http/${var.config_file_base}",
+    "<enter>",
+    "initrdefi /images/pxeboot/initrd.img",
+    "<enter>",
     "boot<enter><wait>"
   ]
   boot_wait        = var.boot_wait
@@ -69,11 +72,14 @@ source "qemu" "gnome-9-x86_64" {
   output_directory = "${var.output_dir}almalinux-9-gnome-x86_64"
   disk_size        = "5000"
   boot_command     = [
-    "c<wait>",
-    "linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=AlmaLinux-9-1-x86_64-dvd ro ",
-    "inst.text biosdevname=0 net.ifnames=0 ",
-    "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.config_folder}alma-linux-9/http/${var.config_file_base}<enter>",
-    "initrdefi /images/pxeboot/initrd.img<enter>",
+    "c<tab><wait>",
+    " linuxefi /images/pxeboot/vmlinuz",
+    " inst.stage2=hd:LABEL=AlmaLinux-9-3-x86_64-dvd ro",
+    " inst.text biosdevname=0 net.ifnames=0",
+    " inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.config_folder}alma-linux-9/http/${var.config_file_base}",
+    "<enter>",
+    "initrdefi /images/pxeboot/initrd.img",
+    "<enter>",
     "boot<enter><wait>"
   ]
   boot_wait        = var.boot_wait

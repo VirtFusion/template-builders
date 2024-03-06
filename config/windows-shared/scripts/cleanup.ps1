@@ -31,3 +31,8 @@ Write-Host Clearing Event Logs
 Clear-EventLog -LogName Application -ErrorAction SilentlyContinue
 Clear-EventLog -LogName System -ErrorAction SilentlyContinue
 Clear-EventLog -LogName Security -ErrorAction SilentlyContinue
+
+secedit /export /cfg securityconfig.cfg
+(Get-Content securityconfig.cfg).replace("AllowAdministratorLockout = 1", "AllowAdministratorLockout = 0") | Set-Content securityconfig.cfg
+secedit /configure /db C:\Windows\security\local.sdb /cfg securityconfig.cfg /areas SECURITYPOLICY
+Remove-Item securityconfig.cfg

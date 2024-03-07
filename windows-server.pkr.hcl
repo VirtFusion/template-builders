@@ -29,7 +29,7 @@ variables {
 }
 
 source "qemu" "server-2019-standard" {
-  disk_size    = "12500"
+  disk_size    = "14000"
   communicator = "winrm"
 
   floppy_files = [
@@ -68,7 +68,7 @@ source "qemu" "server-2019-standard" {
 }
 
 source "qemu" "server-2019-standard-eval" {
-  disk_size    = "12500"
+  disk_size    = "14000"
   communicator = "winrm"
   floppy_files = [
     "./config/windows-shared/scripts/*",
@@ -104,7 +104,7 @@ source "qemu" "server-2019-standard-eval" {
 }
 
 source "qemu" "server-2022-standard-eval" {
-  disk_size    = "12000"
+  disk_size    = "12500"
   communicator = "winrm"
   floppy_files = [
     "./config/windows-shared/scripts/*",
@@ -194,20 +194,20 @@ build {
     ]
   }
 
-  provisioner "windows-shell" {
-    inline = ["powershell.exe a:\\edge.ps1"]
-    only   = [
-      "qemu.server-2019-standard",
-      "qemu.server-2019-standard-eval"
-    ]
-  }
-
   provisioner "powershell" {
     scripts = ["./config/windows-shared/scripts/debloat-windows.ps1"]
   }
 
   provisioner "windows-restart" {
     restart_timeout = "${var.restart_timeout}"
+  }
+
+  provisioner "windows-shell" {
+    inline = ["powershell.exe a:\\edge.ps1"]
+    only   = [
+      "qemu.server-2019-standard",
+      "qemu.server-2019-standard-eval"
+    ]
   }
 
   provisioner "windows-shell" {
